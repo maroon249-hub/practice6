@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        // 필요하다면 Python 환경 경로 설정
+        //PYTHONPATH = env.WORKSPACE
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -11,19 +16,19 @@ pipeline {
 
         stage('Set Up Python Environment') {
             steps {
-                // 윈도우 환경에 맞춘 pip 업그레이드 및 설치
+                // Windows 환경에 맞춘 Python 가상환경 생성 및 의존성 설치
                 bat '''
                     python -m venv venv
                     call venv\\Scripts\\activate
                     python -m pip install --upgrade pip
-                    pip install -r requirements.txt
+                    python -m pip install -r requirements.txt
                 '''
             }
         }
 
         stage('Run pytest') {
             steps {
-                // python -m 모듈 실행 방식으로 경로(Path) 문제 자동 해결
+                // pytest 실행하여 테스트 수행, JUnit XML 리포트 생성
                 bat '''
                     call venv\\Scripts\\activate
                     python -m pytest tests/ --junitxml=pytest-report.xml
@@ -34,7 +39,7 @@ pipeline {
 
     post {
         always {
-            // JUnit 테스트 결과 보고서 Jenkins에 게시
+            // JUnit 테스트 결과 보고서 Jenkins에 게시 (Post-build 설정 자동화)
             junit 'pytest-report.xml'
         }
         success {
