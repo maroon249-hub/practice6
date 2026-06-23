@@ -4,7 +4,7 @@ services:
   jenkins:
     image: jenkins/jenkins:lts
     ports:
-      - "8080:8080"      # Jenkins 웹 UI 접속 포트
+      - "5500:8080"      # Jenkins 웹 UI 접속 포트
       - "50000:50000"    # Jenkins 에이전트 통신 포트
     volumes:
       - jenkins_home:/var/jenkins_home              # Jenkins 데이터 영구 저장
